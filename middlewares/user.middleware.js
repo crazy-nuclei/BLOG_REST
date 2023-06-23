@@ -1,4 +1,4 @@
-const {userRegisterSchema} = require('../validators/user.validator');
+const {userRegisterSchema, userLoginSchema} = require('../validators/user.validator');
 
 const validateRegisterReq = async(req, res, next) => {
     try {
@@ -11,6 +11,17 @@ const validateRegisterReq = async(req, res, next) => {
     }
 }
 
+const validateLoginReq = async (req, res, next) => {
+    try {
+        await userLoginSchema.validateAsync();
+        next();
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
-    validateRegisterReq
+    validateRegisterReq,
+    validateLoginReq
 }

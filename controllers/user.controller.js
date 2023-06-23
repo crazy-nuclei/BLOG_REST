@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const userService = require('../services/user.service');
 const utils = require('../utils/index')
 const jwtHelper = require('../helpers/jwt.helper');
+const createHttpError = require('http-errors');
 const saltRounds = 10;
 
 const registerUser = async(req, res, next) => {
@@ -22,6 +23,36 @@ const registerUser = async(req, res, next) => {
             refreshToken
         });
     } catch (error) {
+        next(error);
+    }
+}
+
+const loginUser = async (req, res, next) => {
+    try {
+        const searchParams = {email : req.body.email};
+        const user = await userService.findUniqueUser(searchParams);
+
+        const verify = await bcrypt.compare(req.body.password, user.password);
+
+        if(!verify) {
+            throw createHttpError.Unauthorized("Incorrect Email or password");
+        }
+
+        const fuser = utils.makeObjectSelected(user, ["_id", "first_name", "role"]);
+
+        const accessToken = jwtHelper.signAccessToken(user._id);
+        const refreshToken = jwtHelper.signRefreshToken(user._id);
+
+        res.send({
+            fuser, 
+            accessToken,
+            refreshToken
+        });
+
+    } catch (error) {
+        if(error.status && error.status == 404) {
+            next(createHttpError.Unauthorized("Incorrect Email or password"));
+        }
         next(error);
     }
 }
@@ -53,6 +84,7 @@ const getUserProfile = async(req, res, next) => {
 module.exports = {
     registerUser,
     deleteUser,
-    getUserProfile
+    getUserProfile,
+    loginUser
 }
 

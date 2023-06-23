@@ -24,6 +24,16 @@ const userRegisterSchema = Joi.object({
         .required()
 });
 
+const userLoginSchema = Joi.object({
+    email : Joi.string()
+        .email({minDomainSegments : 2})
+        .required(),
+
+    password : Joi.string()
+        .required()
+})
+
 module.exports = {
-    userRegisterSchema
+    userRegisterSchema,
+    userLoginSchema
 }
