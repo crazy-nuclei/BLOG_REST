@@ -11,6 +11,7 @@ router.get('/', (req,res) => {
 router.post('/register', validateRegisterReq, userController.registerUser);
 router.post('/login', validateLoginReq, userController.loginUser);
 router.get('/me', jwtHelper.verifyAccessToken, userController.getUserProfile);
+router.get("/getProfile/:bloggerId", userController.getBloggerProfile);
 router.delete('/delete', userController.deleteUser);
 
 module.exports = router;

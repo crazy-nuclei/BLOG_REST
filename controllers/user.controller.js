@@ -71,7 +71,7 @@ const deleteUser = async(req, res, next) => {
 const getUserProfile = async(req, res, next) => {
     try{
         const searchParams = {_id : req.body.id};
-        const selectFields = 'img email first_name last_name joined role job address about'
+        const selectFields = 'img email first_name last_name joined role job address about';
         const user = await userService.findUniqueUser(searchParams, selectFields);
         res.send({
             user
@@ -81,10 +81,27 @@ const getUserProfile = async(req, res, next) => {
     }
 }
 
+const getBloggerProfile = async (req, res, next) => {
+    try {
+        const bloggerId = req.params.bloggerId;
+
+        const searchParams = {_id : bloggerId};
+        const selectFields = 'img email first_name last_name joined role job address about';
+        const user = await userService.findUniqueUser(searchParams, selectFields);
+        res.send({
+            user
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     registerUser,
     deleteUser,
     getUserProfile,
-    loginUser
+    loginUser,
+    getBloggerProfile
 }
 

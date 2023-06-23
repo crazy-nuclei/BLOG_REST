@@ -30,6 +30,9 @@ const findUniqueUser = async (searchParams, selectFields = '') => {
         return Promise.resolve(user);
 
     } catch (error) {
+        if(error.name == 'CastError') {
+            return Promise.reject(createErrors.BadRequest("Invalid blogger ID"));
+        }
         return Promise.reject(error);
     }
 }
