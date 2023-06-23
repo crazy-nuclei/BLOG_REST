@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const createErrors = require('http-errors');
+const userRoute = require('./routes/user.route');
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.get('/', (req, res) => {
     res.send("HELLO FROM BLOG APP");
 });
 
+app.use('/user', userRoute);
+
 // all the routes that does not exist 
 app.use((req, res, next) => {
     next(createErrors.NotFound('This route does not exist'));
@@ -22,7 +25,7 @@ app.use((req, res, next) => {
 
 // handling errors 
 app.use((err, req, res, next) => {
-    res.status(err.status).send({
+    res.status(err.status || 500).send({
         status : err.status || 500, 
         message : err.message || "Internal Server Error"
     })
