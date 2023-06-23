@@ -31,7 +31,7 @@ const userLoginSchema = Joi.object({
 
     password : Joi.string()
         .required()
-})
+});
 
 module.exports = {
     userRegisterSchema,

@@ -13,7 +13,7 @@ const validateRegisterReq = async(req, res, next) => {
 
 const validateLoginReq = async (req, res, next) => {
     try {
-        await userLoginSchema.validateAsync();
+        await userLoginSchema.validateAsync(req.body);
         next();
 
     } catch (error) {
