@@ -14,6 +14,11 @@ router.post('/login', validateLoginReq, userController.loginUser);
 router.get('/me', jwtHelper.verifyAccessToken, userController.getUserProfile);
 router.get("/getProfile/:bloggerId", userController.getBloggerProfile);
 router.delete('/delete', userController.deleteUser);
-router.post('/changeAvatar', upload.single('avatar'), userController.changeAvatar);
+router.post('/changeAvatar', 
+    jwtHelper.verifyAccessToken, 
+    upload.single('avatar'), 
+    jwtHelper.verifyAccessToken,
+    userController.changeAvatar
+);
 
 module.exports = router;

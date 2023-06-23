@@ -5,6 +5,7 @@ const jwtHelper = require('../helpers/jwt.helper');
 const createHttpError = require('http-errors');
 const saltRounds = 10;
 const fs = require('fs');
+const cloudinary = require('../helpers/cloudinary.helper');
 
 const registerUser = async(req, res, next) => {
     try {
@@ -45,7 +46,7 @@ const loginUser = async (req, res, next) => {
         const refreshToken = jwtHelper.signRefreshToken(user._id);
 
         res.send({
-            fuser, 
+            user : fuser, 
             accessToken,
             refreshToken
         });
@@ -103,15 +104,25 @@ const changeAvatar = async (req, res, next) => {
         if(!req.file) {
             throw createHttpError.BadRequest("No file present");
         }
-        const fi = req.file;
 
-        fs.unlink(fi.path, (err) => {
+        const uploaded = await cloudinary.uploader.upload(req.file.path, {
+            folder : "avatars"
+        });
+
+        fs.unlink(req.file.path, async (err) => {
             if(err) {
+                const deleted = await cloudinary.uploader.destroy(uploaded.public_id);
                 throw createHttpError.InternalServerError("Unable to delete file from server");
             }
-        })
+        });
 
-        res.send(fi);
+        let updated = await userService.updateUser(req.body.id, {img : uploaded.secure_url});
+
+        updated = utils.makeObjectSelected(updated, ['img', 'first_name', 'role']);
+        res.send({
+            user : updated
+        });
+
     } catch (error) {
         next(error);
     }

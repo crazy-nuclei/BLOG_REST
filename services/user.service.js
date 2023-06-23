@@ -51,8 +51,23 @@ const deleteUser = async (email) => {
     }
 }
 
+const updateUser = async (id, updateBody) => {
+    try {
+        const user = await User.findByIdAndUpdate(id, updateBody, {new : true});
+
+        if(!user) {
+            throw createErrors.NotFound("User not found");
+        }
+
+        return Promise.resolve(user);
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
 module.exports = {
     createUser,
     deleteUser,
-    findUniqueUser
+    findUniqueUser,
+    updateUser
 }
