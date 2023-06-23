@@ -17,6 +17,23 @@ const createUser = async(userbody) => {
     }
 }
 
+const findUniqueUser = async (searchParams, selectFields = '') => {
+    try {
+        const user = await User
+            .findOne(searchParams)
+            .select(selectFields);
+        
+        if(!user) {
+            throw createErrors.NotFound("User does not exist");
+        }
+
+        return Promise.resolve(user);
+
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
 const deleteUser = async (email) => {
     try {
         const deletedUser = await User.findOneAndDelete({email});
@@ -33,5 +50,6 @@ const deleteUser = async (email) => {
 
 module.exports = {
     createUser,
-    deleteUser
+    deleteUser,
+    findUniqueUser
 }
