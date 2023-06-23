@@ -9,4 +9,6 @@ router.get('/', (req,res) => {
 })
 router.post('/register', validateRegisterReq, userController.registerUser);
 
+router.delete('/delete', userController.deleteUser);
+
 module.exports = router;

@@ -17,6 +17,21 @@ const createUser = async(userbody) => {
     }
 }
 
+const deleteUser = async (email) => {
+    try {
+        const deletedUser = await User.findOneAndDelete({email});
+
+        if(!deletedUser) {
+            throw createErrors.NotFound("This user does not exist");
+        }
+
+        return Promise.resolve(deletedUser);
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
 module.exports = {
-    createUser
+    createUser,
+    deleteUser
 }
