@@ -4,6 +4,7 @@ const utils = require('../utils/index')
 const jwtHelper = require('../helpers/jwt.helper');
 const createHttpError = require('http-errors');
 const saltRounds = 10;
+const fs = require('fs');
 
 const registerUser = async(req, res, next) => {
     try {
@@ -97,11 +98,31 @@ const getBloggerProfile = async (req, res, next) => {
     }
 }
 
+const changeAvatar = async (req, res, next) => {
+    try {
+        if(!req.file) {
+            throw createHttpError.BadRequest("No file present");
+        }
+        const fi = req.file;
+
+        fs.unlink(fi.path, (err) => {
+            if(err) {
+                throw createHttpError.InternalServerError("Unable to delete file from server");
+            }
+        })
+
+        res.send(fi);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     registerUser,
     deleteUser,
     getUserProfile,
     loginUser,
-    getBloggerProfile
+    getBloggerProfile,
+    changeAvatar
 }
 
